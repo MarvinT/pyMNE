@@ -11,8 +11,15 @@ def main():
     gb = gabor_fn(theta=np.pi/4)
     pylab.imshow(gb, cmap=cm.gray, interpolation="nearest")
     pylab.show()
+    np.savetxt('rf.dat', gb)
     # generate spike train
+    v = np.resize(gb, (1, np.size(gb)))
     # use 1/(1+exp(v*x+c)) to generate spike train
+    p = 1 / (1 + np.exp(v.dot(stimuli)))
+    spikes = np.random.rand(np.size(p)) > p
+    # save to compare results in matlab
+    np.savetxt('stimuli.dat', stimuli)
+    np.savetxt('spikes.dat', spikes, fmt='%d')
     # run MNE
     # display recovered rf to generative rf
 
