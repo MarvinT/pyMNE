@@ -1,4 +1,4 @@
-function pfinal = MNEfit(stim, resp, teststim, testresp, celltype, cellnum, jack, order, Nd, fittype)
+function pfinal = MNEfit(stim, resp, teststim, testresp, celltype, cellnum, jack, order, Nd, fittype, freq_band)
 
 
 % If you are fitting a MNE model with constraints beyond first and second
