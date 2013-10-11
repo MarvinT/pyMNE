@@ -2,6 +2,30 @@ import numpy as np
 import matplotlib.cm as cm
 import pylab
 
+def main():
+    # generate white noise stimuli:
+    #   consider 2^14 16x16 white noise patches, 
+    #   reshaped to form column vector of length 256
+    stimuli = np.random.randn(256, 2**14)
+    # create gabor rf
+    gb = gabor_fn(theta=np.pi/4)
+    pylab.imshow(gb, cmap=cm.gray, interpolation="nearest")
+    pylab.show()
+    np.savetxt('rf.dat', gb)
+    # generate spike train
+    v = np.resize(gb, (1, np.size(gb)))
+    # use 1/(1+exp(v*x+c)) to generate spike train
+    p = 1 / (1 + np.exp(v.dot(stimuli)))
+    spikes = np.random.rand(np.size(p)) > p
+    # save to compare results in matlab
+    np.savetxt('stimuli.dat', stimuli)
+    np.savetxt('spikes.dat', spikes, fmt='%d')
+    # run MNE
+    # display recovered rf to generative rf
+
+if __name__ == '__main__':
+    main()
+
 def gabor_fn(bw=3,gamma=0.5,psi=0,lambd=6,theta=0):
     # bw    = bandwidth, (1)
     # gamma = aspect ratio, (0.5)
@@ -27,20 +51,3 @@ def gabor_fn(bw=3,gamma=0.5,psi=0,lambd=6,theta=0):
 
     gb=np.exp(-0.5*(x_theta**2/sigma_x**2+y_theta**2/sigma_y**2))*np.cos(2*np.pi/lambd*x_theta+psi);
     return gb
-
-def main():
-    # generate white noise stimuli:
-    #   consider 2^14 16x16 white noise patches, 
-    #   reshaped to form column vector of length 256
-    stimuli = np.random.randn(256, 2**14)
-    # create gabor rf
-    gb = gabor_fn(theta=np.pi/4)
-    pylab.imshow(gb, cmap=cm.gray, interpolation="nearest")
-    pylab.show()
-    # generate spike train
-    # use 1/(1+exp(v*x+c)) to generate spike train
-    # run MNE
-    # display recovered rf to generative rf
-
-if __name__ == '__main__':
-    main()
