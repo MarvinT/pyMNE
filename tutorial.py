@@ -23,8 +23,6 @@ def main():
     # run MNE
     # display recovered rf to generative rf
 
-if __name__ == '__main__':
-    main()
 
 def gabor_fn(bw=3,gamma=0.5,psi=0,lambd=6,theta=0):
     # bw    = bandwidth, (1)
@@ -51,3 +49,6 @@ def gabor_fn(bw=3,gamma=0.5,psi=0,lambd=6,theta=0):
 
     gb=np.exp(-0.5*(x_theta**2/sigma_x**2+y_theta**2/sigma_y**2))*np.cos(2*np.pi/lambd*x_theta+psi);
     return gb
+
+if __name__ == '__main__':
+    main()
