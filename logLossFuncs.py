@@ -21,6 +21,9 @@ arguments: (all of matrix type)
 
 '''
 def log_loss(p, stim, resp, order):
+    #get p into correct form:
+    p = np.matrix(p)
+    
     #get number of samples and dimensionality of stimulus
     Nsamples = np.size(stim,0)
     Ndim = np.size(stim,1)
@@ -66,12 +69,16 @@ def test_log_loss():
 
 '''
 Gradient of the log loss function:
-    moves p-vector towards values that will generate the STA and STC of the
-    population response
-    
-    ...input values are in matrix form
+    From Fitzgerald thesis: (at point p)
+        grad(L(p)) = -<g(yt(n),xt)>data - (1/T)sum(grad(Zp(xt))...T inputs and N observations to each input (N = number of neurons)
+        grad(L(p)) = -<g(yt(n),xt)>data + <g>point
+    The first term is calculated from the data before gradient opt begins...
+    Thus, the gradient log loss function works by calculating <g>point (the average
+    of the constraints over the distribution with parameter vector p)
 '''
 def d_log_loss(p,stim,avgs,order):
+    #get p into correct form:
+    p = np.matrix(p)
     #get number of samples and dimensionality of stimulus
     Nsamples = np.size(stim,0)
     Ndim = np.size(stim,1)
