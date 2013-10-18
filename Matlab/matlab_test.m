@@ -35,7 +35,7 @@ end
 
 for i = 1:options.njack
     subplot(2,options.njack, i + (i > (options.njack / 2)) * options.njack / 2)
-    imshow(reshape(-pfinals(i,2:end), sqrt(Ndims), sqrt(Ndims)), [-.25, 1])
+    imshow(reshape(pfinals(i,2:end), sqrt(Ndims), sqrt(Ndims)), [-.25, 1])
 end
 
 subplot(122)

@@ -16,7 +16,7 @@ def main():
     v = np.resize(gb, (1, np.size(gb)))
     # use 1/(1+exp(v*x+c)) to generate spike train
     p = 1 / (1 + np.exp(v.dot(stimuli)))
-    spikes = np.random.rand(np.size(p)) > p
+    spikes = np.random.rand(np.size(p)) < p
     # save to compare results in matlab
     np.savetxt('stimuli.dat', stimuli)
     np.savetxt('spikes.dat', spikes, fmt='%d')
