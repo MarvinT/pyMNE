@@ -1,0 +1,17 @@
+Tentative Plan:
+
+I believe that the MNE matlab code essentially works by minimizing the the 
+distance between the spike-triggered average (STA) and spike-triggered covariance 
+(STC) described by the neuronal response data and the STA/STC produced by the
+p-vector while maximizing the entropy (function of p-vector, stimulus, and response).
+
+It seems that this is done by:
+1. Using log loss gradient to determine direction in which to move p-vector
+== moves p-vector so as to reduce difference in STA/STC from neuronal response.
+2. How far the p-vector is moved in the direction from (1) depends on the
+the distance along this vector that minimizes the log-loss function.
+
+Thus, it seems that we should be able to use log_loss and d_log_loss functions
+along with the python gradient descent method 
+(http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin_tnc.html)
+to implement pyMNE. 
