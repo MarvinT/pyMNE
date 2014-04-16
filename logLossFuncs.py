@@ -2,7 +2,7 @@ import numpy as np
 
 '''
 Log Loss function: 
-    L = -<Log[P(y|x)]>, averaged over the empirical distribution
+    L = -<Log[1 + P(y|x)]>, averaged over the empirical distribution = minimize log(1/(1 + P(y|x)))
     L = -1/Nsamples * sum_Stim(NspikesperStim/Nrep * log[P(spike|Stim)] + NsilencesperStim/Nrep * log[P(no spike|Stim)])
 Log loss function = noise entropy -> maximizing the noise entropy of a joint ensemble yields
 the least biased estimate of the conditional probability
@@ -44,11 +44,19 @@ def log_loss(p, stim, resp, order):
     else:
         f1 = 1 + np.exp(np.array(np.ones(Nsamples)*a) + np.array(stim * h.T)[:,0] + (np.sum(np.array(stim)*np.array(stim*J),1)))
         f0 = 1 + np.exp(-np.array(np.ones(Nsamples)*a) - np.array(stim * h.T)[:,0] - (np.sum(np.array(stim)*np.array(stim*J),1)))
-        
+    
+    #print 'f1'
+    #print f1
     F1 = np.array(resp)[:,0] * np.log(np.array(f1))
-    F0 = (1 - np.array(resp)[:,0]) * np.log(np.array(f0))
+    #print F1
+    #print 'f0'
+    #print f0
+    F0 = (1 - np.array(resp)[:,0]) * np.log(np.array(f0)) 
+    #print F0
     F1[np.isnan(F1)] = 0
     F0[np.isnan(F0)] = 0
+    #print 'ave entropy'
+    #print np.mean(F0 + F1)
     return np.mean(F0 + F1)
     
 def test_log_loss():
@@ -56,8 +64,8 @@ def test_log_loss():
     Nsamples = 3
     Ndim = 2
     '''
-    stim = np.matrix([[1,0],[0,1],[1,1]])
-    resp = np.matrix([[1],[0],[1]])
+    stim = np.matrix([[0,0],[0,1],[1,0],[1,1]])
+    resp = np.matrix([[0],[0],[1]])
     p_order1 = np.matrix([[.5],[.5],[1]]).T
     print log_loss(p_order1,stim,resp,1) #matches matlab code = 1.2139
     p_order2 = np.matrix([[.5],[.5],[.5],[.1],[.2],[.3],[.4]]).T
@@ -92,20 +100,27 @@ def d_log_loss(p,stim,avgs,order):
         J_squash = p[0,Ndim+1:Ndim+2+Ndim**2]
         #reshape J into Ndim x Ndim matrix:
         J = np.reshape(J_squash,(Ndim,Ndim))
+   
+        '''
+        Review what is happening from here on...
+        ''' 
         
     if(order == 1):
         pSpike = 1/(1 + np.exp(a + stim * h.T)) #Nsamples x 1
         averages = np.zeros(Ndim+1)
         averages[0] = np.mean(pSpike)
         averages[1:] = np.array(stim.T*pSpike)[:,0]/Nsamples #Nsamples x 1
-    else: #assume oreder = 2
+    else: #assume order = 2
         pSpike = 1 / (1 + np.exp(np.array(np.ones(Nsamples)*a) + np.array(stim * h.T)[:,0] + (np.sum(np.array(stim)*np.array(stim*J),1))))
         averages = np.zeros(np.size(p))
         averages[0] = np.mean(pSpike)
-        averages[1:Ndim+1] = np.array(stim.T*np.matrix(pSpike).T)[:,0]/Nsamples
-        temp = (stim.T * (np.array(np.tile(pSpike,(Ndim,1))).T * np.array(stim)))/Nsamples
+        averages[1:Ndim+1] = np.array(stim.T*np.matrix(pSpike).T)[:,0]/Nsamples #ave number of spikes for each stim dimension
+        temp = (stim.T * (np.array(np.tile(pSpike,(Ndim,1))).T * np.array(stim)))/Nsamples  #ave number of spikes for each stim correlation
         temp = np.reshape(temp,[Ndim**2,1])
-        averages[Ndim+1:Ndim+1+Ndim**2] = np.array(temp)[:,0]
+        averages[Ndim+1:Ndim+1+Ndim**2] = np.array(temp)[:,0] 
+    
+    #print 'average differences:'
+    #print np.array(avgs)[:,0] - averages
         
     return np.array(avgs)[:,0] - averages
     
@@ -124,7 +139,7 @@ def test_d_log_loss():
     print d_log_loss(p_order2,stim,avgs2,2) 
     # matches matlab code:  -0.0745    0.0915    0.2088    0.2915    0.4747    0.5747    0.6088
     
-test_d_log_loss()
+#test_d_log_loss()
 
     
     
