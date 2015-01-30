@@ -31,5 +31,9 @@ elseif order==2
     temp = reshape(temp,[Ndim^2,1]);
     averages(Ndim+2:Ndim+1+Ndim^2) = temp;    
 end
+%display(size(pSpike))
+%display(size(averages))
+%display(size(avgs))
 
 df = (avgs - averages)';  % 1 x Ndim
+%display(df)

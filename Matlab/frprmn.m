@@ -44,13 +44,16 @@ for its=1:ITMAX,
         end
         
         if tally==10 || its==400
+            disp(tally)
+            disp(its)
             disp('min of test set found');
             exitCondition = 1;
             break;
         end
         
     else
-        J = reshape(p(52:2551),50,50);
+        [Nsamples,Ndim] = size(stim);
+        J = reshape(p(Ndim+2:Ndim+1+Ndim^2),[Ndim,Ndim]);
         [evecs,evals]=eig(J);
         [EV,inds] = sort((diag(evals)));
         disp(num2str([min(EV) , max(EV)]));
