@@ -14,7 +14,7 @@ tally = 0;
 
 % Loop over iterations of minimization
 for its=1:ITMAX,
-    %disp(['Iteration ' num2str(its)]);
+    disp(['Iteration ' num2str(its)]);
   
     [p, xi, fret] = dlinmin(p, xi, func, dfunc, stim, resp, order, avgs);
     flist(its)=fret;
