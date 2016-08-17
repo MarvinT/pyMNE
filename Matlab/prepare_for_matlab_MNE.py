@@ -77,7 +77,15 @@ def prepare_for_matlab_MNE(block_path, rec, stimulus, unit, winsize=21.0):
 	response_matfilename = os.path.join(block_path, 'MNE_response_mat-stim_{}-unit_{}'.format(stimulus, unit))		
 	savemat(response_matfilename, {'response':response_data})
 
+def prepare_stimulus_for_MNE(stimulus_file):
 
+	#load wavefile
+	(fs, stim_data) = wavefile.read(stimulus_file)
+
+	#downsample
+	q = np.round(fs/24000.)
+	stim_deci = decimate(stim_data, q, zero_phase=True)
+	
 
 
 
